@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 52, "column": 0}, "map": {"version":3,"sources":["file:///E:/workbuddy/2026-08-31-08-05-44/9527-chat/app/api/health/route.ts"],"sourcesContent":["export const runtime = \"nodejs\";\n\nexport async function GET() {\n  try {\n    const base = (process.env.MODEL_BASE_URL ?? \"http://localhost:8000/v1\").replace(/\\/$/, \"\");\n    const res = await fetch(`${base}/models`, {\n      headers: {\n        Authorization: `Bearer ${process.env.MODEL_API_KEY ?? \"\"}`,\n      },\n      signal: AbortSignal.timeout(5_000),\n    });\n    return Response.json({ ok: res.ok });\n  } catch {\n    return Response.json({ ok: false });\n  }\n}\n"],"names":["runtime","GET","base","process","env","MODEL_BASE_URL","replace","res","fetch","headers","Authorization","MODEL_API_KEY","signal","AbortSignal","timeout","Response","json","ok"],"mappings":";;;;;;AAAO,MAAMA,UAAU;AAEhB,eAAeC;IACpB,IAAI;QACF,MAAMC,OAAO,CAACC,QAAQC,GAAG,CAACC,cAAc,IAAI,0BAA0B,EAAEC,OAAO,CAAC,OAAO;QACvF,MAAMC,MAAM,MAAMC,MAAM,GAAGN,KAAK,OAAO,CAAC,EAAE;YACxCO,SAAS;gBACPC,eAAe,CAAC,OAAO,EAAEP,QAAQC,GAAG,CAACO,aAAa,IAAI,IAAI;YAC5D;YACAC,QAAQC,YAAYC,OAAO,CAAC;QAC9B;QACA,OAAOC,SAASC,IAAI,CAAC;YAAEC,IAAIV,IAAIU,EAAE;QAAC;IACpC,EAAE,OAAM;QACN,OAAOF,SAASC,IAAI,CAAC;YAAEC,IAAI;QAAM;IACnC;AACF"}}]
+}
