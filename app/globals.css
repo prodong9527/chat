@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f6f4ee;
+  --paper-card: #fffefb;
+  --ink: #1f1c19;
+  --ink-soft: #6b6459;
+  --seal: #a8322d;
+  --line: #ddd6c8;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-card: var(--paper-card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-seal: var(--seal);
+  --color-line: var(--line);
+
+  --font-sans: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei",
+    "Hiragino Sans GB", sans-serif;
+  --font-brush: "STKaiti", "KaiTi", "Kaiti SC", "Songti SC", "SimSun",
+    "Noto Serif CJK SC", serif;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei",
+    "Hiragino Sans GB", sans-serif;
+}
+
+::selection {
+  background: #e8d9c5;
+}
