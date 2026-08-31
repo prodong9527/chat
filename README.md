@@ -28,10 +28,12 @@ npm run dev
 接模型的三个玩具需要一个 OpenAI 兼容端点。复制 `.env.local.example` 为 `.env.local`，填三项：
 
 ```
-MODEL_BASE_URL=https://你的端点/v1
-MODEL_API_KEY=你的密钥
-MODEL_ID=qwen3-27b
+OPENAI_BASE_URL=https://你的端点/v1
+OPENAI_API_KEY=你的密钥
+MODEL_NAME=qwen3-27b
 ```
+
+`OPENAI_BASE_URL`、`OPENAI_API_KEY` 和 `MODEL_NAME` 也适用于 Vercel 的环境变量设置。旧变量名 `MODEL_BASE_URL`、`MODEL_API_KEY`、`MODEL_ID` 仍可作为本地兼容配置使用。
 
 不配也能跑：纯前端玩具正常用，接模型的玩具会显示歇工降级文案。
 
@@ -41,7 +43,7 @@ MODEL_ID=qwen3-27b
 vercel deploy --prod
 ```
 
-或推到 GitHub 后在 Vercel 控制台 Import。记得在 Vercel 的 Environment Variables 里也填上面三项。
+或推到 GitHub 后在 Vercel 控制台 Import。在 Vercel 的 Environment Variables 中为 Production 添加上面三项，然后重新部署一次使新变量生效。
 
 ## 技术栈
 

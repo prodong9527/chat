@@ -1,11 +1,14 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { getModelConfig } from "@/lib/model-config";
+
+const modelConfig = getModelConfig(process.env);
 
 export const qwen = createOpenAICompatible({
   name: "qwen-local",
-  baseURL: process.env.MODEL_BASE_URL ?? "http://localhost:8000/v1",
+  baseURL: modelConfig.baseURL,
   headers: {
-    Authorization: `Bearer ${process.env.MODEL_API_KEY ?? ""}`,
+    Authorization: `Bearer ${modelConfig.apiKey}`,
   },
 });
 
-export const MODEL_ID = process.env.MODEL_ID ?? "qwen3-27b";
+export const MODEL_ID = modelConfig.modelId;
