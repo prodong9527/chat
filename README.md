@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 9527 号 · 什么都接
 
-## Getting Started
+一个周星驰 9527 梗的个人游乐场。9527 是《逃学威龙》里周星星的警号，也是《唐伯虎点秋香》里唐伯虎卖身进华府当仆人的编号。
 
-First, run the development server:
+本号承接对对子、发工牌、派工单、接状子，以及一切没有意义但有趣的业务。**不承接任何正经业务。**
+
+## 玩具
+
+| 路由 | 名称 | 类型 |
+|---|---|---|
+| `/badge` | 工牌生成器 | 纯前端 Canvas |
+| `/draw` | 抽签入职 | 纯前端词库 |
+| `/duilian` | 对穿肠擂台 | 接模型 |
+| `/ticket` | 今日工单 | 接模型 |
+| `/petition` | 华府信访办 | 接模型 |
+
+## 本地跑
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 模型配置
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+接模型的三个玩具需要一个 OpenAI 兼容端点。复制 `.env.local.example` 为 `.env.local`，填三项：
 
-## Learn More
+```
+MODEL_BASE_URL=https://你的端点/v1
+MODEL_API_KEY=你的密钥
+MODEL_ID=qwen3-27b
+```
 
-To learn more about Next.js, take a look at the following resources:
+不配也能跑：纯前端玩具正常用，接模型的玩具会显示歇工降级文案。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 部署
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+vercel deploy --prod
+```
 
-## Deploy on Vercel
+或推到 GitHub 后在 Vercel 控制台 Import。记得在 Vercel 的 Environment Variables 里也填上面三项。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 技术栈
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 · AI SDK 7 · Tailwind 4 · TypeScript
