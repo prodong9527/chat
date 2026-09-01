@@ -12,6 +12,6 @@ export function streamStallResult(stall: Stall, input: Record<string, string>) {
   const instruction = STALL_INSTRUCTIONS[stall.slug] ?? "根据业务给出清晰回执。";
   // Return headers immediately so Vercel and mobile networks keep the request open
   // while Qwen reasons. The browser parses the complete JSON receipt at the end.
-  const result = streamText({ model: qwen(MODEL_ID), temperature: 0.8, maxOutputTokens: 1_000, abortSignal: AbortSignal.timeout(120_000), providerOptions: { "qwen-local": { enable_thinking: false } }, system: `你是华府后街的${stall.name}。用中文荒诞但友善地办理业务。${instruction} 每个 value 最多 60 个汉字；若是已读乱回，每条最多 36 个汉字。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。`, prompt: content });
+  const result = streamText({ model: qwen(MODEL_ID), temperature: 0.8, maxOutputTokens: 1_000, abortSignal: AbortSignal.timeout(120_000), providerOptions: { qwenLocal: { enable_thinking: false } }, system: `你是华府后街的${stall.name}。用中文荒诞但友善地办理业务。${instruction} 每个 value 最多 60 个汉字；若是已读乱回，每条最多 36 个汉字。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。`, prompt: content });
   return result.toTextStreamResponse();
 }
