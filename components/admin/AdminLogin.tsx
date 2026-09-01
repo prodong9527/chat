@@ -1,0 +1,3 @@
+"use client";
+import { useState } from "react";
+export function AdminLogin() { const [password, setPassword] = useState(""); const [error, setError] = useState(""); async function login() { const response = await fetch("/api/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password }) }); if (response.ok) location.reload(); else setError("口令不对，门房不让进。"); } return <section className="service-desk"><label>华府内务口令<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></label><button onClick={login}>验明正身</button>{error && <p className="desk-error">{error}</p>}</section>; }
