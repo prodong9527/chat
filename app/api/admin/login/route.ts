@@ -1,9 +1,10 @@
-import { createAdminSession, adminErrorResponse, verifyAdminPassword } from "@/lib/auth/admin";
+import { assertSameOrigin, createAdminSession, adminErrorResponse, verifyAdminPassword } from "@/lib/auth/admin";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
+    assertSameOrigin(request);
     const body = (await request.json()) as { password?: unknown };
     if (typeof body.password !== "string" || !(await verifyAdminPassword(body.password))) {
       return Response.json({ error: "invalid credentials" }, { status: 401 });
