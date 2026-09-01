@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const IDLE_LINES = [
   {
@@ -27,11 +27,6 @@ export default function Idle({
   const [line] = useState(
     () => IDLE_LINES[Math.floor(Math.random() * IDLE_LINES.length)],
   );
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
-
   return (
     <div className="border border-dashed border-line rounded-lg p-10 text-center">
       <p className="font-brush text-2xl font-bold mb-3">{line.title}</p>

@@ -46,11 +46,7 @@ export default function ToyChat({ toy, placeholder, hint }: Props) {
 
   // 27B 首字本来就慢，超过 8 秒给句人话
   useEffect(() => {
-    if (status !== "submitted") {
-      setSlow(false);
-      return;
-    }
-    const t = setTimeout(() => setSlow(true), 8000);
+    const t = setTimeout(() => setSlow(status === "submitted"), status === "submitted" ? 8000 : 0);
     return () => clearTimeout(t);
   }, [status]);
 

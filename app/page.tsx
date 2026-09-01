@@ -4,7 +4,7 @@ import { DistrictStreet } from "@/components/market/DistrictStreet";
 import { MarketShell } from "@/components/market/MarketShell";
 
 function fallbackMarket(): PublicDistrict[] {
-  return LAUNCH_DISTRICTS.map((district, index) => ({ id: `fallback-${district.slug}`, ...district, stalls: LAUNCH_STALLS.filter((stall) => stall.districtSlug === district.slug).map((stall) => ({ id: `fallback-${stall.slug}`, ...stall, generations: 0 })) }));
+  return LAUNCH_DISTRICTS.map((district) => ({ id: `fallback-${district.slug}`, ...district, stalls: LAUNCH_STALLS.filter((stall) => stall.districtSlug === district.slug).map((stall) => ({ id: `fallback-${stall.slug}`, ...stall, generations: 0 })) }));
 }
 
 export default async function Home() {
