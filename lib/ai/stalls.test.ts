@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseStallResult } from "./stalls";
+import { parseStallResult } from "../stalls/result";
 describe("stall results", () => {
   it("accepts a fenced JSON model response and strips the fence", () => expect(parseStallResult('```json\n{"title":"回执","summary":"已办","sections":[]}\n```').title).toBe("回执"));
   it("extracts JSON after a Qwen reasoning prefix", () => expect(parseStallResult('<think>先想想</think>\n{"title":"回执","summary":"已办","sections":[]}').title).toBe("回执"));
