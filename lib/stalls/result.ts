@@ -21,5 +21,10 @@ export function parseStallResult(text: string): StallResult {
     // Qwen may place a <think> block or a short explanation before the JSON receipt.
     const json = stripped.match(/\{[\s\S]*\}/)?.[0] ?? stripped;
     return ResultSchema.parse(JSON.parse(json));
-  } catch { throw new Error("模型回执格式不对"); }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error(`模型回执字段不合规：${error.issues.map((issue) => issue.path.join(".") || "根对象").join(",")}`);
+    }
+    throw new Error("模型回执不是有效 JSON");
+  }
 }
