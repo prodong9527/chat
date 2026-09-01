@@ -16,7 +16,14 @@ const STALL_INSTRUCTIONS: Record<string, string> = {
   "leave-request": "输出保守、正常、离谱三个 section；每个 section 都必须包含请假理由、领导可能回复和推荐跟进回复。不要编造医疗诊断、法律事实或公司制度。",
   "weekly-report": "输出一段约 200 字专业周报、一个‘本周亮点’ section 和一个‘下周计划’ section。",
 };
-export function parseStallResult(text: string): StallResult { try { const stripped = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, ""); return ResultSchema.parse(JSON.parse(stripped)); } catch { throw new Error("模型回执格式不对"); } }
+export function parseStallResult(text: string): StallResult {
+  try {
+    const stripped = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    // Qwen may place a <think> block or a short explanation before the JSON receipt.
+    const json = stripped.match(/\{[\s\S]*\}/)?.[0] ?? stripped;
+    return ResultSchema.parse(JSON.parse(json));
+  } catch { throw new Error("模型回执格式不对"); }
+}
 export async function generateStallResult(stall: Stall, input: Record<string, string>) {
   const content = Object.entries(input).map(([key, value]) => `${key}: ${value.slice(0, 500)}`).join("\n");
   const instruction = STALL_INSTRUCTIONS[stall.slug] ?? "根据业务给出清晰回执。";
