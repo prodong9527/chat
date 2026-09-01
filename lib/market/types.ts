@@ -31,7 +31,7 @@ export const StallResultSchema = z.object({
   title: z.string(),
   summary: z.string(),
   sections: z.array(z.object({ label: z.string(), value: z.string() })),
-  shareTemplate: z.record(z.string(), z.unknown()),
+  shareTemplate: z.enum(["badge", "fortune", "chat", "notice", "leave", "report"]),
 });
 
 export type StallStatus = z.infer<typeof StallStatusSchema>;
