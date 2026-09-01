@@ -1,5 +1,19 @@
-import Link from "next/link";
+import { listPublicDistricts, type PublicDistrict } from "@/lib/db/market";
+import { LAUNCH_DISTRICTS, LAUNCH_STALLS } from "@/lib/market/catalog";
+import { DistrictStreet } from "@/components/market/DistrictStreet";
+import { MarketShell } from "@/components/market/MarketShell";
 
+function fallbackMarket(): PublicDistrict[] {
+  return LAUNCH_DISTRICTS.map((district, index) => ({ id: `fallback-${district.slug}`, ...district, stalls: LAUNCH_STALLS.filter((stall) => stall.districtSlug === district.slug).map((stall) => ({ id: `fallback-${stall.slug}`, ...stall, generations: 0 })) }));
+}
+
+export default async function Home() {
+  let districts: PublicDistrict[];
+  try { districts = await listPublicDistricts(); } catch { districts = fallbackMarket(); }
+  return <MarketShell><section className="market-hero"><p>华府后街 · 内部便民服务</p><h1>逛摊办事，<br />不必讲道理。</h1><span>摊位随时增开，业务随时离谱。</span></section><aside className="market-notice">今日告示：请各位同僚有事没事都来排个队，显得我们很忙。</aside><div className="market-streets">{districts.map((district) => <DistrictStreet key={district.slug} district={district} />)}</div></MarketShell>;
+}
+
+/*
 const TOYS = [
   {
     href: "/badge",
@@ -38,7 +52,7 @@ const TOYS = [
   },
 ];
 
-export default function Home() {
+export default function OldHome() {
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-16 sm:py-24">
       <header className="mb-14">
@@ -94,3 +108,4 @@ export default function Home() {
     </main>
   );
 }
+*/

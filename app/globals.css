@@ -30,6 +30,13 @@ body {
     "Hiragino Sans GB", sans-serif;
 }
 
+.market-shell{width:min(1180px,100%);margin:auto;padding:24px 20px 64px;background:linear-gradient(90deg,transparent 0 7%,#e8dec9 7% 7.15%,transparent 7.15% 92.85%,#e8dec9 92.85% 93%,transparent 93%)}
+.market-header,.market-footer{display:flex;justify-content:space-between;gap:16px;align-items:center;font-size:13px;color:var(--ink-soft)}.market-header{border-bottom:1px solid var(--line);padding-bottom:16px}.market-brand{font-family:var(--font-brush);font-size:20px;color:var(--ink);text-decoration:none}.market-brand b{color:var(--seal)}
+.market-hero{padding:64px 7% 30px}.market-hero p{color:var(--seal);letter-spacing:.2em;font-size:13px}.market-hero h1{font-family:var(--font-brush);font-size:clamp(48px,8vw,96px);line-height:.92;margin:14px 0 22px}.market-hero span{color:var(--ink-soft)}
+.market-notice{margin:0 7% 34px;padding:14px 18px;border:1px dashed #b88657;background:#fff9e8;color:#704b28;transform:rotate(-.3deg)}.market-streets{display:grid;gap:38px}.district-street{padding:0 7%}.street-label{display:flex;align-items:baseline;gap:14px;margin-bottom:13px}.street-label span{font-size:12px;color:var(--seal);letter-spacing:.12em}.street-label h2{font-family:var(--font-brush);font-size:28px;margin:0}.stall-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.stall-sign{min-height:180px;padding:18px;display:flex;flex-direction:column;border:2px solid #342c22;background:var(--paper-card);box-shadow:5px 5px 0 #d8c7ad;color:var(--ink);text-decoration:none;transition:transform .18s,box-shadow .18s}.stall-sign:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 #cba77f}.stall-sign h3{font-family:var(--font-brush);font-size:23px;margin:10px 0 5px}.stall-sign p{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0}.stall-code{align-self:flex-start;padding:2px 7px;background:var(--seal);color:white;font:700 11px monospace}.stall-sign footer{margin-top:auto;padding-top:16px;display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft)}.stall-sign footer b{font-weight:500}.stall-closed{opacity:.55;filter:grayscale(.5)}.market-footer{margin:70px 7% 0;padding-top:18px;border-top:1px solid var(--line)}
+@media (max-width:639px){.market-shell{padding:16px 14px 46px}.market-header span{display:none}.market-hero{padding:44px 8px 24px}.market-notice,.district-street,.market-footer{margin-left:8px;margin-right:8px;padding-left:0;padding-right:0}.market-notice{padding:14px}.stall-grid{grid-template-columns:1fr}.stall-sign{min-height:152px}.market-footer{display:block;line-height:1.5}}
+@media (prefers-reduced-motion:reduce){.stall-sign{transition:none}.stall-sign:hover{transform:none}}
+
 ::selection {
   background: #e8d9c5;
 }
