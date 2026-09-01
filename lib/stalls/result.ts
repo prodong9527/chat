@@ -7,6 +7,7 @@ const ResultSchema = z.object({
   sections: z.array(z.object({ label: z.string().min(1).max(30), value: z.string().min(1).max(240) })).max(8),
   shareTemplate: z.enum(["badge", "fortune", "chat", "notice", "leave", "report"]).default("notice"),
 });
+const SHARE_TEMPLATES = new Set(["badge", "fortune", "chat", "notice", "leave", "report"]);
 
 export const SERVICE_FIELDS: Record<string, { label: string; placeholder: string; mode?: "select"; options?: string[] }> = {
   "read-reply": { label: "同事发来的原话", placeholder: "例如：在吗？今天的方案能发我吗？" },
@@ -20,7 +21,11 @@ export function parseStallResult(text: string): StallResult {
     const stripped = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
     // Qwen may place a <think> block or a short explanation before the JSON receipt.
     const json = stripped.match(/\{[\s\S]*\}/)?.[0] ?? stripped;
-    return ResultSchema.parse(JSON.parse(json));
+    const receipt = JSON.parse(json) as Record<string, unknown>;
+    if (typeof receipt.shareTemplate === "string" && !SHARE_TEMPLATES.has(receipt.shareTemplate)) {
+      receipt.shareTemplate = "notice";
+    }
+    return ResultSchema.parse(receipt);
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(`模型回执字段不合规：${error.issues.map((issue) => issue.path.join(".") || "根对象").join(",")}`);
