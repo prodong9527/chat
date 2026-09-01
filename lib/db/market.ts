@@ -163,6 +163,32 @@ export async function listAdminStalls(): Promise<Stall[]> {
   return rows.map(toStall);
 }
 
+export async function listDistricts(): Promise<District[]> {
+  const rows = await query<{ id: string; slug: string; name: string; accent: string; sort_order: number }>`
+    SELECT id, slug, name, accent, sort_order FROM districts ORDER BY sort_order`;
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    accent: row.accent,
+    sortOrder: row.sort_order,
+  }));
+}
+
+export async function deleteStall(slug: string) {
+  const rows = await query<{ slug: string }>`DELETE FROM stalls WHERE slug = ${slug} RETURNING slug`;
+  if (!rows[0]) throw new Error("Stall not found");
+}
+
+export async function listMetricSummary() {
+  return query<{ slug: string; visits: number; generations: number; image_saves: number }>`
+    SELECT s.slug, COALESCE(SUM(m.visits), 0)::integer AS visits,
+      COALESCE(SUM(m.generations), 0)::integer AS generations,
+      COALESCE(SUM(m.image_saves), 0)::integer AS image_saves
+    FROM stalls s LEFT JOIN daily_metrics m ON m.stall_id = s.id
+    GROUP BY s.slug ORDER BY s.slug`;
+}
+
 export async function saveStall(input: SaveStallInput): Promise<Stall> {
   const rows = await query<StallRow>`
     INSERT INTO stalls (slug, code, district_id, name, description, status, type, sort_order, config)
