@@ -18,6 +18,9 @@
 /.next*/
 /out/
 
+# local feature worktrees
+/.worktrees/
+
 # production
 /build
 
