@@ -37,6 +37,15 @@ MODEL_NAME=qwen3-27b
 
 不配也能跑：纯前端玩具正常用，接模型的玩具会显示歇工降级文案。
 
+## Market database setup
+
+Vercel Marketplace 的 Neon 集成会提供 `DATABASE_URL`。不要把该值提交到源码控制中。连接 Neon 后，由操作人员在本地显式执行一次迁移；不要把迁移放入 Vercel 的构建钩子，以免预览或并发部署重复执行。
+
+```bash
+vercel env pull .env.local
+npm run db:migrate
+```
+
 ## 部署
 
 ```bash
