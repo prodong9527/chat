@@ -1,4 +1,4 @@
-import { generateText } from "ai";
+import { streamText } from "ai";
 import { z } from "zod";
 import { qwen, MODEL_ID } from "@/lib/model";
 import type { Stall, StallResult } from "@/lib/market/types";
@@ -27,6 +27,8 @@ export function parseStallResult(text: string): StallResult {
 export async function generateStallResult(stall: Stall, input: Record<string, string>) {
   const content = Object.entries(input).map(([key, value]) => `${key}: ${value.slice(0, 500)}`).join("\n");
   const instruction = STALL_INSTRUCTIONS[stall.slug] ?? "根据业务给出清晰回执。";
-  const result = await generateText({ model: qwen(MODEL_ID), temperature: 0.8, maxOutputTokens: 400, abortSignal: AbortSignal.timeout(120_000), system: `你是华府后街的${stall.name}。用中文荒诞但友善地办理业务。${instruction} 每个 value 最多 60 个汉字；若是已读乱回，每条最多 36 个汉字。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。`, prompt: content });
-  return parseStallResult(result.text);
+  // This provider is verified in production with streaming chat; collecting the
+  // stream server-side keeps the public contract as one complete JSON receipt.
+  const result = streamText({ model: qwen(MODEL_ID), temperature: 0.8, maxOutputTokens: 400, abortSignal: AbortSignal.timeout(120_000), system: `你是华府后街的${stall.name}。用中文荒诞但友善地办理业务。${instruction} 每个 value 最多 60 个汉字；若是已读乱回，每条最多 36 个汉字。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。`, prompt: content });
+  return parseStallResult(await result.text);
 }
