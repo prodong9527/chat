@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { LAUNCH_STALLS } from "@/lib/market/catalog";
 import { MetricEventSchema } from "@/lib/market/types";
 import { recordMetricBestEffort } from "@/lib/market/metrics";
 
 const MetricSchema = z.object({
-  slug: z.enum(LAUNCH_STALLS.map((stall) => stall.slug) as [string, ...string[]]),
+  // Slugs are checked by the SQL INSERT's `SELECT ... FROM stalls`; this keeps
+  // metrics available for new admin-created stalls without accepting arbitrary SQL.
+  slug: z.string().regex(/^[a-z0-9-]{1,64}$/),
   event: MetricEventSchema,
 });
 
