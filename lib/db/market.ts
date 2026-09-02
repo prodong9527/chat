@@ -16,7 +16,7 @@ type StallRow = {
   config: Record<string, unknown>;
 };
 
-type PublicStallRow = StallRow & { generations: number };
+type PublicStallRow = StallRow & { generations: number; total_generations: number };
 type PublicDistrictRow = PublicStallRow & {
   district_id: string;
   district_slug: string;
@@ -25,7 +25,7 @@ type PublicDistrictRow = PublicStallRow & {
   district_sort_order: number;
 };
 
-export type PublicStall = Stall & { generations: number };
+export type PublicStall = Stall & { generations: number; totalGenerations: number; hotRank?: 1 | 2 | 3 };
 export type PublicDistrict = District & { stalls: PublicStall[] };
 export type SaveStallInput = Omit<Stall, "id">;
 export type MoveStallInput = {
@@ -92,10 +92,11 @@ export async function listPublicDistricts(): Promise<PublicDistrict[]> {
       s.type,
       s.sort_order,
       s.config,
-      COALESCE(metrics.generations, 0) AS generations
+      COALESCE(metrics.generations, 0) AS generations, COALESCE(totals.total_generations, 0) AS total_generations
     FROM districts d
     LEFT JOIN stalls s ON s.district_id = d.id AND s.status IN ('open', 'coming_soon')
     LEFT JOIN daily_metrics metrics ON metrics.stall_id = s.id AND metrics.metric_date = CURRENT_DATE
+    LEFT JOIN (SELECT stall_id, SUM(generations)::integer AS total_generations FROM daily_metrics GROUP BY stall_id) totals ON totals.stall_id = s.id
     ORDER BY d.sort_order, s.sort_order`;
 
   const districts = new Map<string, PublicDistrict>();
@@ -111,13 +112,16 @@ export async function listPublicDistricts(): Promise<PublicDistrict[]> {
     };
 
     if (row.id) {
-      district.stalls.push({ ...toStall(row), generations: Number(row.generations) });
+      district.stalls.push({ ...toStall(row), generations: Number(row.generations), totalGenerations: Number(row.total_generations) });
     }
 
     districts.set(district.slug, district);
   }
 
-  return [...districts.values()];
+  const result = [...districts.values()];
+  const { assignHotRanks } = await import("@/lib/market/ranking");
+  const ranks = assignHotRanks(result.flatMap((district) => district.stalls));
+  return result.map((district) => ({ ...district, stalls: district.stalls.map((stall) => ranks[stall.slug] ? { ...stall, hotRank: ranks[stall.slug] } : stall) }));
 }
 
 export async function getPublicStall(slug: string): Promise<PublicStall | null> {
@@ -133,14 +137,15 @@ export async function getPublicStall(slug: string): Promise<PublicStall | null> 
       s.type,
       s.sort_order,
       s.config,
-      COALESCE(metrics.generations, 0) AS generations
+      COALESCE(metrics.generations, 0) AS generations, COALESCE(totals.total_generations, 0) AS total_generations
     FROM stalls s
     JOIN districts d ON d.id = s.district_id
     LEFT JOIN daily_metrics metrics ON metrics.stall_id = s.id AND metrics.metric_date = CURRENT_DATE
+    LEFT JOIN (SELECT stall_id, SUM(generations)::integer AS total_generations FROM daily_metrics GROUP BY stall_id) totals ON totals.stall_id = s.id
     WHERE s.slug = ${slug} AND s.status IN ('open', 'coming_soon')`;
 
   const row = rows[0];
-  return row ? { ...toStall(row), generations: Number(row.generations) } : null;
+  return row ? { ...toStall(row), generations: Number(row.generations), totalGenerations: Number(row.total_generations) } : null;
 }
 
 export async function listAdminStalls(): Promise<Stall[]> {

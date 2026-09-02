@@ -45,3 +45,5 @@ body {
 ::selection {
   background: #e8d9c5;
 }
+
+.stall-sign{position:relative}.hot-stall{position:absolute;top:17px;right:17px;padding:3px 7px;background:#d99127;color:white;font:700 11px var(--font-sans);font-style:normal}.stall-sign footer b{display:grid;gap:3px;text-align:right}.stall-sign footer small{font-weight:400}
