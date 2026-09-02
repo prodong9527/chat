@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { MetricEventSchema } from "@/lib/market/types";
 import { recordMetricBestEffort } from "@/lib/market/metrics";
+import { listTodayGenerationCounts } from "@/lib/db/market";
 
 const MetricSchema = z.object({
   // Slugs are checked by the SQL INSERT's `SELECT ... FROM stalls`; this keeps
@@ -8,6 +9,16 @@ const MetricSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]{1,64}$/),
   event: MetricEventSchema,
 });
+
+export async function GET() {
+  try {
+    return Response.json({ generations: await listTodayGenerationCounts() }, {
+      headers: { "cache-control": "no-store" },
+    });
+  } catch {
+    return Response.json({ generations: {} }, { headers: { "cache-control": "no-store" } });
+  }
+}
 
 export async function POST(request: Request) {
   try {

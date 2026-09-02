@@ -189,6 +189,14 @@ export async function listMetricSummary() {
     GROUP BY s.slug ORDER BY s.slug`;
 }
 
+export async function listTodayGenerationCounts() {
+  const rows = await query<{ slug: string; generations: number }>`
+    SELECT s.slug, COALESCE(m.generations, 0)::integer AS generations
+    FROM stalls s
+    LEFT JOIN daily_metrics m ON m.stall_id = s.id AND m.metric_date = CURRENT_DATE`;
+  return Object.fromEntries(rows.map((row) => [row.slug, Number(row.generations)]));
+}
+
 export async function saveStall(input: SaveStallInput): Promise<Stall> {
   const rows = await query<StallRow>`
     INSERT INTO stalls (slug, code, district_id, name, description, status, type, sort_order, config)

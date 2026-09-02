@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { drawDate, drawNumber, drawPost, type Post } from "@/lib/draw-data";
+import { MarketShell } from "@/components/market/MarketShell";
 
 type Result = {
   post: Post;
@@ -52,15 +53,10 @@ export default function DrawPage() {
   const isLucky = result?.number === "9527";
 
   return (
-    <main className="flex-1 w-full max-w-2xl mx-auto px-6 py-12 sm:py-16">
-      <Link
-        href="/"
-        className="inline-block text-sm text-ink-soft hover:text-seal mb-10"
-      >
-        ← 回杂役摊
-      </Link>
+    <MarketShell><section className="draw-page">
+      <Link href="/" className="market-back">← 返回集市</Link>
 
-      <header className="mb-10">
+      <header className="draw-heading">
         <h1 className="font-brush text-4xl sm:text-5xl font-bold mb-3">
           抽签入职
         </h1>
@@ -149,6 +145,6 @@ export default function DrawPage() {
           抽中不许反悔。华府人事科敬启。
         </p>
       )}
-    </main>
+    </section></MarketShell>
   );
 }

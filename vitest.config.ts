@@ -24,7 +24,7 @@ export default defineConfig({
         test: {
           name: "jsdom",
           environment: "jsdom",
-          include: ["components/**/*.test.tsx"],
+          include: ["components/**/*.test.tsx", "app/**/*.test.tsx"],
         },
       },
     ],
