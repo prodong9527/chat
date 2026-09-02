@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getDailyFortune } from "@/lib/stalls/fortune";
 import { ShareActions } from "@/components/share/ShareActions";
+import { recordGeneration } from "@/lib/market/client-metrics";
 
 export function FortuneDesk() {
   const [fortune, setFortune] = useState<ReturnType<typeof getDailyFortune>>();
@@ -10,6 +11,7 @@ export function FortuneDesk() {
       let seed = localStorage.getItem("huafu-device-seed");
       if (!seed) { seed = crypto.randomUUID(); localStorage.setItem("huafu-device-seed", seed); }
       setFortune(getDailyFortune(new Date().toISOString().slice(0, 10), seed));
+      void recordGeneration("desk-fortune");
     }, 0);
     return () => clearTimeout(timer);
   }, []);

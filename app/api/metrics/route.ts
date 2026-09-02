@@ -23,8 +23,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { slug, event } = MetricSchema.parse(await request.json());
-    await recordMetricBestEffort(slug, event);
-    return Response.json({ ok: true });
+    const recorded = await recordMetricBestEffort(slug, event);
+    return recorded ? Response.json({ ok: true }) : Response.json({ error: "metric_unavailable" }, { status: 503 });
   } catch (error) {
     if (error instanceof z.ZodError) return Response.json({ error: "bad_metric" }, { status: 400 });
     return Response.json({ ok: true });

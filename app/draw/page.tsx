@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { drawDate, drawNumber, drawPost, type Post } from "@/lib/draw-data";
 import { MarketShell } from "@/components/market/MarketShell";
+import { recordGeneration } from "@/lib/market/client-metrics";
 
 type Result = {
   post: Post;
@@ -45,6 +46,7 @@ export default function DrawPage() {
           number: drawNumber(),
           date: drawDate(),
         });
+        void recordGeneration("job-draw");
         setRolling(false);
       }
     }, 45);

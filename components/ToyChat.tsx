@@ -5,6 +5,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
 import { GREETINGS, type ToyKey } from "@/lib/prompts";
 import Idle from "./Idle";
+import { recordGeneration } from "@/lib/market/client-metrics";
 
 type Props = {
   toy: ToyKey;
@@ -33,6 +34,7 @@ export default function ToyChat({ toy, placeholder, hint }: Props) {
   const [input, setInput] = useState("");
   const [slow, setSlow] = useState(false);
   const greeted = useRef(false);
+  const awaitingReceipt = useRef(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   const busy = status === "submitted" || status === "streaming";
@@ -55,9 +57,16 @@ export default function ToyChat({ toy, placeholder, hint }: Props) {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy, slow]);
 
+  useEffect(() => {
+    if (!awaitingReceipt.current || busy || !messages.some((message) => message.role === "assistant")) return;
+    awaitingReceipt.current = false;
+    void recordGeneration(toy);
+  }, [busy, messages, toy]);
+
   function submit() {
     const text = input.trim();
     if (!text || busy) return;
+    awaitingReceipt.current = true;
     sendMessage({ text });
     setInput("");
   }
