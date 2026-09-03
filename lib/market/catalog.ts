@@ -9,7 +9,7 @@ export const LAUNCH_DISTRICTS: Omit<District, "id">[] = [
 ];
 
 export const LAUNCH_STALLS: Omit<Stall, "id">[] = [
-  { slug: "huafu-badge", code: "A-01", districtSlug: "entry", name: "华府人事摊", description: "生成一张离谱工牌", status: "open", type: "custom_ai", sortOrder: 0, config: {} },
+  { slug: "huafu-badge", code: "A-01", districtSlug: "entry", name: "投名状摊", description: "凑齐四样凭据，递一张入府投名状", status: "open", type: "local", sortOrder: 0, config: {} },
   { slug: "job-draw", code: "A-02", districtSlug: "entry", name: "入职抽签处", description: "抽一张今日入职签", status: "open", type: "local", sortOrder: 1, config: {} },
   { slug: "duilian", code: "B-01", districtSlug: "entertainment", name: "对穿肠擂台", description: "和对穿肠过几招", status: "open", type: "custom_ai", sortOrder: 0, config: {} },
   { slug: "desk-fortune", code: "B-02", districtSlug: "entertainment", name: "工位玄学铺", description: "摇一支今日职场卦", status: "open", type: "daily", sortOrder: 1, config: {} },
