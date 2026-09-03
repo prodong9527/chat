@@ -15,7 +15,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     const rate = checkRate(clientIp(request));
     if (!rate.ok) return Response.json({ error: "rate" }, { status: 429 });
 
-    const payload = await request.json();
+    let payload: unknown;
+    try {
+      payload = await request.json();
+    } catch {
+      return Response.json({ error: "bad_request" }, { status: 400 });
+    }
     if (isGroupGameSlug(slug)) {
       const input = parseGroupGameInput(slug, payload);
       return Response.json(await generateGroupGameResult(slug, input));
