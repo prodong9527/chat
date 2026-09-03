@@ -19,9 +19,9 @@ export const LAUNCH_STALLS: Omit<Stall, "id">[] = [
   { slug: "weekly-report", code: "D-01", districtSlug: "reports", name: "周报膨胀厂", description: "把周报吹得天花乱坠", status: "open", type: "generic_ai", sortOrder: 0, config: {} },
   { slug: "ticket", code: "E-01", districtSlug: "errands", name: "今日工单", description: "领一张今日荒唐工单", status: "open", type: "custom_ai", sortOrder: 0, config: {} },
   { slug: "petition", code: "E-02", districtSlug: "errands", name: "华府信访办", description: "递上一份不正经状子", status: "open", type: "custom_ai", sortOrder: 1, config: {} },
-  { slug: "newcomer-guide", code: "A-03", districtSlug: "entry", name: "入府适应办", description: "新人求生手册，筹备中", status: "coming_soon", type: "generic_ai", sortOrder: 2, config: {} },
-  { slug: "meeting-exit", code: "C-04", districtSlug: "workplace", name: "会议脱身处", description: "体面离场话术，筹备中", status: "coming_soon", type: "generic_ai", sortOrder: 3, config: {} },
-  { slug: "performance-defense", code: "D-02", districtSlug: "reports", name: "绩效申辩堂", description: "年度成绩效自评，筹备中", status: "coming_soon", type: "generic_ai", sortOrder: 1, config: {} },
+  { slug: "newcomer-guide", code: "A-03", districtSlug: "entry", name: "入府适应办", description: "生成一份华府新员工说明书", status: "open", type: "generic_ai", sortOrder: 2, config: { game: "newcomer-guide" } },
+  { slug: "meeting-exit", code: "C-04", districtSlug: "workplace", name: "会议脱身处", description: "抽一份会议逃生演练通报", status: "open", type: "generic_ai", sortOrder: 3, config: { game: "meeting-exit" } },
+  { slug: "performance-defense", code: "D-02", districtSlug: "reports", name: "绩效申辩堂", description: "颁一张年度摸鱼成果奖", status: "open", type: "generic_ai", sortOrder: 1, config: { game: "performance-defense" } },
 ];
 
 export const GENERIC_STALL_DEFAULTS = {
