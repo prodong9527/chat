@@ -53,7 +53,7 @@ export function ServiceDesk({ slug, name }: { slug: string; name: string }) {
         {groupField.options ? <select value={groupInput[groupField.name] ?? ""} onChange={(event) => setGroupInput((current) => ({ ...current, [groupField.name]: event.target.value }))}>
           <option value="" disabled>请选择</option>
           {groupField.options.map((option) => <option key={option} value={option}>{option}</option>)}
-        </select> : <textarea value={groupInput[groupField.name] ?? ""} onChange={(event) => setGroupInput((current) => ({ ...current, [groupField.name]: event.target.value }))} placeholder={groupField.placeholder} maxLength={60} />}
+        </select> : groupField.name === "smallTask" ? <textarea value={groupInput[groupField.name] ?? ""} onChange={(event) => setGroupInput((current) => ({ ...current, [groupField.name]: event.target.value }))} placeholder={groupField.placeholder} maxLength={60} /> : <input value={groupInput[groupField.name] ?? ""} onChange={(event) => setGroupInput((current) => ({ ...current, [groupField.name]: event.target.value }))} placeholder={groupField.placeholder} maxLength={30} />}
       </label>)}
     </div> : <label>{field.label}<textarea value={input} onChange={(event) => setInput(event.target.value)} placeholder={field.placeholder} maxLength={500} /></label>}
     <button disabled={!ready || busy} onClick={submit}>{busy ? <><i className="desk-spinner" aria-hidden />正在替你走流程</> : "递交材料"}</button>

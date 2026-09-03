@@ -22,6 +22,23 @@ afterEach(() => {
 });
 
 describe("ServiceDesk", () => {
+  it("uses a schema-aligned short input and waits for every newcomer field", async () => {
+    const user = userEvent.setup();
+
+    render(<ServiceDesk slug="newcomer-guide" name="新员工说明书摊" />);
+
+    const nickname = screen.getByLabelText("新人代号");
+    const submit = screen.getByRole("button", { name: "递交材料" });
+    expect(nickname.tagName).toBe("INPUT");
+    expect(nickname.getAttribute("maxlength")).toBe("30");
+    expect((submit as HTMLButtonElement).disabled).toBe(true);
+
+    await user.type(nickname, "小王");
+    expect((submit as HTMLButtonElement).disabled).toBe(true);
+    await user.selectOptions(screen.getByLabelText("拟入职部门"), "产品");
+    expect((submit as HTMLButtonElement).disabled).toBe(false);
+  });
+
   it("submits two meeting fields and shows the group prompt", async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify(meetingResult), { status: 200 }))
