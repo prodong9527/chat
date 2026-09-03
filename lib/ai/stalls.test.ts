@@ -64,8 +64,11 @@ describe("stall results", () => {
 
   it.each([
     ["a named-person attack", "newcomer-guide", { nickname: "新同事", departmentType: "产品" }, "张三是废物", "handbook"],
+    ["a named-person attack with an intensifier", "newcomer-guide", { nickname: "新同事", departmentType: "产品" }, "张三真是废物", "handbook"],
     ["a protected-characteristic claim", "newcomer-guide", { nickname: "新同事", departmentType: "产品" }, "女性天生不适合技术", "handbook"],
+    ["a protected-characteristic insult", "newcomer-guide", { nickname: "新同事", departmentType: "产品" }, "女性都是废物", "handbook"],
     ["a deceptive meeting-exit direction", "meeting-exit", { meetingType: "例会", exitLevel: "正常" }, "借口接电话后直接离开会议", "drill"],
+    ["a deceptive meeting-exit direction after the meeting reference", "meeting-exit", { meetingType: "例会", exitLevel: "正常" }, "会议中假装有急事后离开", "drill"],
   ] as const)("returns the local fallback for %s", async (_reason, slug, input, unsafeContent, template) => {
     mockGenerateText.mockResolvedValueOnce({ text: gameJson({ sections: [{ label: "行动", value: unsafeContent }], shareTemplate: template }) });
 
