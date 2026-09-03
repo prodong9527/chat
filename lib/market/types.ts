@@ -27,11 +27,23 @@ export const DistrictSchema = z.object({
 
 export const StallGenerationRequestSchema = z.record(z.string(), z.string());
 
+export const ShareTemplateSchema = z.enum([
+  "badge",
+  "fortune",
+  "chat",
+  "notice",
+  "leave",
+  "report",
+  "handbook",
+  "drill",
+  "award",
+]);
+
 export const StallResultSchema = z.object({
   title: z.string(),
   summary: z.string(),
   sections: z.array(z.object({ label: z.string(), value: z.string() })),
-  shareTemplate: z.enum(["badge", "fortune", "chat", "notice", "leave", "report"]),
+  shareTemplate: ShareTemplateSchema,
 });
 
 export type StallStatus = z.infer<typeof StallStatusSchema>;
@@ -40,4 +52,5 @@ export type MetricEvent = z.infer<typeof MetricEventSchema>;
 export type Stall = z.infer<typeof StallSchema>;
 export type District = z.infer<typeof DistrictSchema>;
 export type StallGenerationRequest = z.infer<typeof StallGenerationRequestSchema>;
+export type ShareTemplate = z.infer<typeof ShareTemplateSchema>;
 export type StallResult = z.infer<typeof StallResultSchema>;

@@ -1,4 +1,4 @@
-export type ShareTemplate = "badge" | "fortune" | "chat" | "notice" | "leave" | "report";
+export type ShareTemplate = "badge" | "fortune" | "chat" | "notice" | "leave" | "report" | "handbook" | "drill" | "award";
 export type SharePayload = { title: string; body: string; subtitle?: string; footer?: string };
 
 export function sanitizeSharePayload(payload: SharePayload): SharePayload {
