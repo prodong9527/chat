@@ -21,3 +21,16 @@ Focused regression tests were added before the implementation and initially fail
 - `npm test` — 63 passed across 20 files
 
 `node_modules.incomplete/` was an existing untracked partial dependency tree that caused the repository-wide lint and typecheck to scan third-party files. It is now ignored alongside `node_modules`; no files in that directory were changed.
+
+## Re-review round 2
+
+- Group-game results are now selected exclusively from locally curated, immutable result variants. `generateGroupGameResult` no longer calls the model, so no model text can reach group-game title, summary, or section output.
+- Nickname and `smallTask` remain accepted as form inputs but never contribute to displayed text. Only the safe enum/theme inputs select among curated variants.
+- Newcomer curated results and the local fallback now put exactly three numbered rules in the `隐藏条例` section.
+- Added regressions proving a hostile mocked model response is ignored, arbitrary nickname/small-task text never appears in returned UI data, and both generated and fallback newcomer results contain three discrete hidden rules.
+
+### Re-verification
+
+- `npm run lint` — passed
+- `npx tsc --noEmit` — passed
+- `npm test` — 52 passed across 20 files

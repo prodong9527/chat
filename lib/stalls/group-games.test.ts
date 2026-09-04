@@ -44,4 +44,15 @@ describe("group game contracts", () => {
   ] as const)("provides every required %s fallback section", (slug, labels) => {
     expect(createFallbackGroupGameResult(slug).sections.map(({ label }) => label)).toEqual(labels);
   });
+
+  it("includes exactly three discrete hidden rules in the newcomer fallback", () => {
+    const hiddenRules = createFallbackGroupGameResult("newcomer-guide").sections.find(({ label }) => label === "隐藏条例")?.value.split("\n");
+
+    expect(hiddenRules).toHaveLength(3);
+    expect(hiddenRules).toEqual([
+      expect.stringMatching(/^一、/),
+      expect.stringMatching(/^二、/),
+      expect.stringMatching(/^三、/),
+    ]);
+  });
 });
