@@ -5,8 +5,17 @@ import { drawShareCard, exportPng, selectShareSize, triggerDownload, tryNativeSh
 export function ShareActions({ template, payload, filename, onSaved }: { template: ShareTemplate; payload: SharePayload; filename: string; onSaved?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null); const [error, setError] = useState("");
   const canShare = typeof window !== "undefined" && typeof navigator.share === "function" && typeof (navigator as Navigator & { canShare?: unknown }).canShare === "function";
-  useEffect(() => { if (canvasRef.current) drawShareCard(canvasRef.current, { ...payload, template, footer: payload.footer ?? `华府 ${template} 回执` }, selectShareSize(window.innerWidth)); }, [payload, template]);
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    let errorTimer: number | undefined;
+    try {
+      drawShareCard(canvasRef.current, { ...payload, template, footer: payload.footer ?? `华府 ${template} 回执` }, selectShareSize(window.innerWidth));
+    } catch {
+      errorTimer = window.setTimeout(() => setError("图片没盖出来，文字结果还在，重试一次即可。"), 0);
+    }
+    return () => { if (errorTimer) window.clearTimeout(errorTimer); };
+  }, [payload, template]);
   async function save() { try { const canvas = canvasRef.current; if (!canvas) throw new Error("canvas"); triggerDownload(await exportPng(canvas), filename); onSaved?.(); } catch { setError("图片没盖出来，文字结果还在，重试一次即可。"); } }
-  async function share() { const canvas = canvasRef.current; if (!canvas) return; const blob = await exportPng(canvas); const shared = await tryNativeShare(new File([blob], filename, { type: "image/png" }), payload.title); if (!shared) await save(); }
+  async function share() { try { const canvas = canvasRef.current; if (!canvas) throw new Error("canvas"); const blob = await exportPng(canvas); const shared = await tryNativeShare(new File([blob], filename, { type: "image/png" }), payload.title); if (!shared) await save(); } catch { setError("图片没盖出来，文字结果还在，重试一次即可。"); } }
   return <div className="share-actions"><canvas ref={canvasRef} className="sr-only" aria-hidden="true" /><button onClick={save}>保存图片</button>{canShare && <button onClick={share}>立即分享</button>}{error && <p>{error}</p>}</div>;
 }

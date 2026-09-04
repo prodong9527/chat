@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     ".worktrees/**",
+    "node_modules.incomplete/**",
     "next-env.d.ts",
   ]),
 ]);

@@ -4,6 +4,7 @@ import type { Stall, StallResult } from "@/lib/market/types";
 import {
   createFallbackGroupGameResult,
   getGroupGameDefinition,
+  parseGroupGameResult,
   type GroupGameSlug,
 } from "@/lib/stalls/group-games";
 import { parseStallResult } from "@/lib/stalls/result";
@@ -24,23 +25,27 @@ export function streamStallResult(stall: Stall, input: Record<string, string>) {
 
 // These are conservative, product-specific structural checks, not general-purpose moderation.
 const GROUP_GAME_SAFETY_PATTERNS = [
-  /(?:[\u4E00-\u9FFF]{2,4}|[A-Za-z][A-Za-z .'-]{1,50})(?:真是|就是|是|很|太|都|全都).{0,12}(?:蠢|愚蠢|废物|垃圾|骗子|无能)/u,
-  /(?:某(?:人|公司|组织)|具体(?:个人|公司|组织)).{0,20}(?:蠢|废物|垃圾|骗子|无能)/,
-  /(?:女性|男性|性别|年龄|民族|种族|国籍|残疾|疾病|性取向).{0,20}(?:低等|劣等|不配|天生|注定|不适合|不如|废物|垃圾)/,
-  /(?:听说|据传|内部消息|有人说).{0,40}(?:公司|组织|同事|领导)/,
-  /(?:借口|假装|伪造|谎称|编造|虚构).{0,30}(?:直接|马上|立刻|偷偷|悄悄)?.{0,10}(?:离开|退出|溜出|逃离).{0,10}(?:会议|会场)/,
-  /(?:会议|会场).{0,30}(?:借口|假装|伪造|谎称|编造|虚构).{0,30}(?:离开|退出|溜出|逃离)/,
-  /(?:偷偷离开|不告而别).{0,30}(?:会议|生病|有事|离席)/,
+  /(?:[\u4E00-\u9FFF]{2,4}(?:同事|经理|领导|老师)?|[A-Za-z][A-Za-z .'-]{1,50})(?:真是|就是|是|很|太|都|全都).{0,16}(?:蠢|愚蠢|废物|垃圾|骗子|无能|不配)/u,
+  /(?:某(?:人|公司|组织)|具体(?:个人|公司|组织)).{0,24}(?:蠢|废物|垃圾|骗子|无能|不配)/,
+  /(?:女性|男性|性别|年龄|民族|种族|国籍|残疾(?:人)?|疾病|性取向|宗教).{0,32}(?:低等|劣等|不配|天生|注定|不适合|不如|废物|垃圾|无能)/,
+  /(?:听说|据传|内部消息|有人说).{0,48}(?:公司|组织|同事|领导|经理)/,
+  /(?:借口|假装|伪造|谎称|编造|虚构|装病|装作).{0,60}(?:会议|会场|离席|离开|退出|溜走|开溜|逃离)/,
+  /(?:会议|会场).{0,80}(?:借口|假装|伪造|谎称|编造|虚构|装病|装作|偷偷|悄悄|不告而别|溜走|开溜)/,
+  /(?:偷偷|悄悄|不告而别).{0,36}(?:离开|退出|溜走|开溜|逃离|会议|会场|离席)/,
 ];
 
-function isSafeGroupGameResult(result: StallResult) {
+function isSafeGroupGameResult(result: StallResult, nickname?: string) {
   const content = [result.title, result.summary, ...result.sections.flatMap(({ label, value }) => [label, value])].join("\n");
-  return !GROUP_GAME_SAFETY_PATTERNS.some((pattern) => pattern.test(content));
+  return !(nickname && content.includes(nickname)) && !GROUP_GAME_SAFETY_PATTERNS.some((pattern) => pattern.test(content));
 }
 
 export async function generateGroupGameResult(slug: GroupGameSlug, input: Record<string, string>): Promise<StallResult> {
   const definition = getGroupGameDefinition(slug);
-  const content = Object.entries(input).map(([key, value]) => `${key}: ${value.slice(0, 500)}`).join("\n");
+  const nickname = input.nickname?.trim();
+  const content = Object.entries(input)
+    .filter(([key]) => key !== "nickname")
+    .map(([key, value]) => `${key}: ${value.slice(0, 500)}`)
+    .join("\n");
 
   try {
     const { text } = await generateText({
@@ -49,12 +54,12 @@ export async function generateGroupGameResult(slug: GroupGameSlug, input: Record
       maxOutputTokens: 700,
       abortSignal: AbortSignal.timeout(120_000),
       providerOptions: { qwenLocal: { enable_thinking: false } },
-      system: `你是华府后街的群聊小游戏主持人。${definition.instruction} 不得攻击具体个人或组织；不得使用歧视性语言；不得编造传闻式事实；不得提供欺骗性会议离席指引。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。shareTemplate 必须是 "${definition.shareTemplate}"。`,
+      system: `你是华府后街的群聊小游戏主持人。${definition.instruction} 不得攻击具体个人或组织；不得使用歧视性语言；不得编造传闻式事实；不得提供欺骗性会议离席指引。不得输出或猜测用户昵称。只返回 JSON，结构为 {title,summary,sections:[{label,value}],shareTemplate}，不要 Markdown。shareTemplate 必须是 "${definition.shareTemplate}"。`,
       prompt: content,
     });
-    const result = parseStallResult(text);
+    const result = parseGroupGameResult(slug, parseStallResult(text));
 
-    if (result.shareTemplate !== definition.shareTemplate || !isSafeGroupGameResult(result)) {
+    if (!isSafeGroupGameResult(result, nickname)) {
       throw new Error("群聊小游戏模型回执不符合安全或模板要求");
     }
 

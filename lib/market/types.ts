@@ -44,6 +44,7 @@ export const StallResultSchema = z.object({
   summary: z.string(),
   sections: z.array(z.object({ label: z.string(), value: z.string() })),
   shareTemplate: ShareTemplateSchema,
+  isFallback: z.boolean().optional(),
 });
 
 export type StallStatus = z.infer<typeof StallStatusSchema>;

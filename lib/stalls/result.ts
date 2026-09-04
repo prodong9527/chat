@@ -6,6 +6,7 @@ const ResultSchema = z.object({
   summary: z.string().min(1).max(240),
   sections: z.array(z.object({ label: z.string().min(1).max(30), value: z.string().min(1).max(240) })).max(8),
   shareTemplate: ShareTemplateSchema.default("notice"),
+  isFallback: z.boolean().optional(),
 });
 const SHARE_TEMPLATES = new Set<string>(ShareTemplateSchema.options);
 

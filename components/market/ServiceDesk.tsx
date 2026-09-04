@@ -17,7 +17,7 @@ export function ServiceDesk({ slug, name }: { slug: string; name: string }) {
   const [error, setError] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const ready = groupGame ? groupGame.fields.every((groupField) => groupInput[groupField.name]?.trim()) : input.trim();
+  const ready = groupGame ? groupGame.fields.filter((groupField) => groupField.required !== false).every((groupField) => groupInput[groupField.name]?.trim()) : input.trim();
   const groupText = groupSlug && result ? groupGameShareText(groupSlug, result) : "";
 
   async function submit() {
@@ -60,6 +60,7 @@ export function ServiceDesk({ slug, name }: { slug: string; name: string }) {
     {busy && <p className="desk-loading" role="status">摊主正在盖章、找人签字、假装催办……</p>}
     {error && <p className="desk-error">{error}</p>}
     {result && <><ResultDocument result={result} />
+      {result.isFallback && <p className="group-fallback">本摊临时改由人工印刷</p>}
       {groupGame && <section className="group-copy"><p className="group-prompt">{groupGame.groupPrompt}</p><label>发到群里<textarea aria-label="群聊版内容" readOnly value={groupText} /></label><button onClick={copyGroupText}>复制群聊版</button>{copyMessage && <p>{copyMessage}</p>}</section>}
       <ShareActions template={result.shareTemplate} payload={resultSharePayload(result)} filename={`${slug}-9527.png`} onSaved={() => void fetch("/api/metrics", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ slug, event: "image_save" }) })} />
     </>}

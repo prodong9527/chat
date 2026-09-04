@@ -15,6 +15,7 @@ const meetingResult = {
     { label: "离席通报", value: "我需要在约定时间离开。" },
   ],
   shareTemplate: "drill" as const,
+  isFallback: true,
 };
 
 afterEach(() => {
@@ -22,19 +23,17 @@ afterEach(() => {
 });
 
 describe("ServiceDesk", () => {
-  it("uses a schema-aligned short input and waits for every newcomer field", async () => {
+  it("allows an optional nickname while requiring the allowlisted department", async () => {
     const user = userEvent.setup();
 
     render(<ServiceDesk slug="newcomer-guide" name="新员工说明书摊" />);
 
-    const nickname = screen.getByLabelText("新人代号");
+    const nickname = screen.getByLabelText("新人代号（可留空）");
     const submit = screen.getByRole("button", { name: "递交材料" });
     expect(nickname.tagName).toBe("INPUT");
     expect(nickname.getAttribute("maxlength")).toBe("30");
     expect((submit as HTMLButtonElement).disabled).toBe(true);
 
-    await user.type(nickname, "小王");
-    expect((submit as HTMLButtonElement).disabled).toBe(true);
     await user.selectOptions(screen.getByLabelText("拟入职部门"), "产品");
     expect((submit as HTMLButtonElement).disabled).toBe(false);
   });
@@ -56,7 +55,8 @@ describe("ServiceDesk", () => {
       "/api/stalls/meeting-exit/generate",
       expect.objectContaining({ body: JSON.stringify({ meetingType: "例会", exitLevel: "正常" }) }),
     );
-    expect(await screen.findByText("请各位同事补充一条清晰、诚实的会议协作约定。"))
+    expect(await screen.findByText("请投票：这套方案能否在“最后补充一点”前成功离场？"))
       .toBeTruthy();
+    expect(screen.getByText("本摊临时改由人工印刷")).toBeTruthy();
   });
 });
