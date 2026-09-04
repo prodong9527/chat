@@ -85,6 +85,17 @@ describe("stall generation API", () => {
     expect(response.status).toBe(400);
   });
 
+  it("rejects an arbitrary selector before group-game generation can expose it", async () => {
+    mockGetPublicStall.mockResolvedValue(openGroupStall("meeting-exit"));
+
+    const response = await POST(jsonRequest({ meetingType: "伪造会议", exitLevel: "紧急" }), {
+      params: Promise.resolve({ slug: "meeting-exit" }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(mockGenerateGroupGameResult).not.toHaveBeenCalled();
+  });
+
   it("streams a legacy stall with its input field", async () => {
     const stall = openGroupStall("read-reply");
     const streamResponse = new Response("legacy stream");

@@ -46,4 +46,51 @@ describe("stall results", () => {
 
     expect(hiddenRules).toHaveLength(3);
   });
+
+  it("generates a complete distinct newcomer handbook for every department", async () => {
+    const departments = ["产品", "技术", "设计", "运营", "综合"] as const;
+    const results = await Promise.all(departments.map((departmentType) => generateGroupGameResult("newcomer-guide", { departmentType })));
+
+    for (const result of results) {
+      expect(result.shareTemplate).toBe("handbook");
+      expect(result.sections.map(({ label }) => label)).toEqual(["入职首日必修课", "生存装备", "直属领导饲养指南", "隐藏条例"]);
+      expect(result.sections[3]?.value.split("\n")).toHaveLength(3);
+    }
+    expect(new Set(results.map((result) => JSON.stringify(result))).size).toBe(departments.length);
+  });
+
+  it("generates distinct safe drills for every meeting type and exit level", async () => {
+    const meetingTypes = ["例会", "评审会", "复盘会", "同步会"] as const;
+    const exitLevels = ["正常", "紧急", "荒诞"] as const;
+    const inputs = meetingTypes.flatMap((meetingType) => exitLevels.map((exitLevel) => ({ meetingType, exitLevel })));
+    const results = await Promise.all(inputs.map((input) => generateGroupGameResult("meeting-exit", input)));
+
+    for (const result of results) {
+      expect(result.shareTemplate).toBe("drill");
+      expect(result.sections.map(({ label }) => label)).toEqual(["突发事件", "当前逃生身份", "三步逃生动作", "预计成功率"]);
+      expect(result.sections.some(({ label }) => label === "隐藏条例")).toBe(false);
+    }
+    expect(new Set(results.map((result) => JSON.stringify(result))).size).toBe(inputs.length);
+  });
+
+  it("maps every curated small-task category to a distinct award and preserves work-type variety", async () => {
+    const categoryCases = [
+      ["整理共享文件夹", "归档秩序奖"],
+      ["回复同事的问题", "清晰回声奖"],
+      ["修复登录故障", "补洞修补奖"],
+      ["协调跨组排期", "协作接力奖"],
+      ["给工位浇水", "默默推进奖"],
+    ] as const;
+    const categoryResults = await Promise.all(categoryCases.map(([smallTask]) => generateGroupGameResult("performance-defense", { smallTask, workType: "协作" })));
+    const workTypes = ["协作", "救火", "整理", "沟通", "创意"] as const;
+    const workTypeResults = await Promise.all(workTypes.map((workType) => generateGroupGameResult("performance-defense", { smallTask: "整理会议纪要", workType })));
+
+    categoryResults.forEach((result, index) => {
+      expect(result.shareTemplate).toBe("award");
+      expect(result.sections.map(({ label }) => label)).toEqual(["奖项名称", "表彰事由", "可量化的虚构成果", "评审委员会批语"]);
+      expect(result.sections[0]?.value).toBe(categoryCases[index]?.[1]);
+      expect(result.sections.some(({ label }) => label === "隐藏条例")).toBe(false);
+    });
+    expect(new Set(workTypeResults.map((result) => JSON.stringify(result))).size).toBe(workTypes.length);
+  });
 });

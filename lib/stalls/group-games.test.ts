@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  createCuratedGroupGameResult,
   createFallbackGroupGameResult,
   getGroupGameDefinition,
   groupGameShareText,
@@ -54,5 +55,12 @@ describe("group game contracts", () => {
       expect.stringMatching(/^二、/),
       expect.stringMatching(/^三、/),
     ]);
+  });
+
+  it("returns a local fallback for direct malformed selector values", () => {
+    const result = createCuratedGroupGameResult("meeting-exit", { meetingType: "__proto__", exitLevel: "紧急" });
+
+    expect(result.isFallback).toBe(true);
+    expect(result.sections.map(({ label }) => label)).toEqual(["突发事件", "当前逃生身份", "三步逃生动作", "预计成功率"]);
   });
 });

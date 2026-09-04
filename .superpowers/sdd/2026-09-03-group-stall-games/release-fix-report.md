@@ -34,3 +34,17 @@ Focused regression tests were added before the implementation and initially fail
 - `npm run lint` — passed
 - `npx tsc --noEmit` — passed
 - `npm test` — 52 passed across 20 files
+
+## Final review
+
+- Replaced the curated-result hash with explicit selector mappings: five newcomer department handbooks; four meeting scenarios paired with all three exit levels; and five work-type contexts.
+- `smallTask` is classified locally into organize, communicate, repair, coordinate, or default. It changes the award title, citation, metric, and committee comment without ever becoming visible text.
+- Every meeting type and level now maps to a distinct safe scenario/action receipt, including separate `紧急` and `荒诞` behavior.
+- Added generated-result contract coverage for every department, all 12 meeting combinations, all five task categories, and every work type. The tests assert ordered labels, templates, newcomer-only three-rule output, and distinct curated outputs.
+- Invalid selector values are still rejected by the strict server-side input schemas; the local result factory also returns its curated fallback for an invalid direct invocation rather than exposing an input value.
+
+### Final verification
+
+- `npm run lint` — passed
+- `npx tsc --noEmit` — passed
+- `npm test` — 57 passed across 20 files
